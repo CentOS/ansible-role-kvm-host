@@ -1,0 +1,48 @@
+- name: Ensuring KVM qemu tools are installed
+  yum: name={{ item }} state=installed
+  with_items:
+    - qemu-kvm-tools
+    - qemu-kvm
+    - virt-install
+    - libvirt
+    - libvirt-python
+    - libguestfs-tools-c
+
+- name: Ensuring libvirtd is started
+  service: 
+    name: libvirtd 
+    state: started 
+    enabled: yes
+
+- name: Defining a directory to hold all kickstart files
+  file: 
+    path: /var/lib/libvirt/local-kickstarts/ 
+    state: directory 
+    owner: root 
+    group: root
+
+- name: Dedicated LV for libvirt-images
+  lvol:
+    vg: "{{ ansible_lvm.vgs.keys()[0] }}"
+    lv: libvirt_images
+    size: "{{ kvm_host_lv_size | default('100G')}}"
+ 
+- name: Creating FS on dedicated Lv (if needed)
+  filesystem:
+    fstype: ext4
+    dev: "/dev/{{ ansible_lvm.vgs.keys()[0] }}/libvirt_images"
+
+- name: Ensuring dedicated LV is mounted
+  mount:
+    name: /var/lib/libvirt/images
+    src: "/dev/{{ ansible_lvm.vgs.keys()[0] }}/libvirt_images"
+    fstype: ext4
+    state: mounted
+
+- name: Ensuring correct selinux context
+  file:
+    path: /var/lib/libvirt/images
+    state: directory
+    setype: virt_image_t
+
+
