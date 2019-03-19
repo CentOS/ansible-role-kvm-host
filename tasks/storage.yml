@@ -21,8 +21,23 @@
     owner: root 
     group: root
 
-- include_tasks: storage.yml
-  when: kvm_host_manage_storage
+- name: Dedicated LV for libvirt-images
+  lvol:
+    vg: "{{ ansible_lvm.vgs.keys()[0] }}"
+    lv: libvirt_images
+    size: "{{ kvm_host_lv_size | default('100G')}}"
+ 
+- name: Creating FS on dedicated Lv (if needed)
+  filesystem:
+    fstype: ext4
+    dev: "/dev/{{ ansible_lvm.vgs.keys()[0] }}/libvirt_images"
+
+- name: Ensuring dedicated LV is mounted
+  mount:
+    name: /var/lib/libvirt/images
+    src: "/dev/{{ ansible_lvm.vgs.keys()[0] }}/libvirt_images"
+    fstype: ext4
+    state: mounted
 
 - name: Ensuring correct selinux context
   file:

@@ -1,1 +1,7 @@
 # Defaults variables for role kvm-host
+
+# Do we also want to manage storage pool for libvirt images ?
+# That will create automatically a LV in the first VG and mount it
+# Set it to False if you manage manually or you convert from existing node with storage from other VG/raid/volume
+# Default to True
+kvm_host_manage_storage: True
