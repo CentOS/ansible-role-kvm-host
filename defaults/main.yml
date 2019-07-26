@@ -5,3 +5,7 @@
 # Set it to False if you manage manually or you convert from existing node with storage from other VG/raid/volume
 # Default to True
 kvm_host_manage_storage: True
+# If so, defaulting to first VG found, so you can select other one
+kvm_host_vg: "{{ ansible_lvm.vgs.keys()[0] }}"
+# Default size for libvirt_images LV storage
+kvm_host_lv_size: 100G

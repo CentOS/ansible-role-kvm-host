@@ -23,19 +23,21 @@
 
 - name: Dedicated LV for libvirt-images
   lvol:
-    vg: "{{ ansible_lvm.vgs.keys()[0] }}"
+    vg: "{{ kvm_host_vg }}"
     lv: libvirt_images
     size: "{{ kvm_host_lv_size | default('100G')}}"
- 
+
 - name: Creating FS on dedicated Lv (if needed)
   filesystem:
     fstype: ext4
-    dev: "/dev/{{ ansible_lvm.vgs.keys()[0] }}/libvirt_images"
+    opts: "-m 0.2"
+    dev: "/dev/{{ kvm_host_vg }}/libvirt_images"
+    resizefs: True
 
 - name: Ensuring dedicated LV is mounted
   mount:
     name: /var/lib/libvirt/images
-    src: "/dev/{{ ansible_lvm.vgs.keys()[0] }}/libvirt_images"
+    src: "/dev/{{ kvm_host_vg }}/libvirt_images"
     fstype: ext4
     state: mounted
 
