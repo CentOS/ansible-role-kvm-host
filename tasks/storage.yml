@@ -25,14 +25,14 @@
   lvol:
     vg: "{{ kvm_host_vg }}"
     lv: libvirt_images
-    size: "{{ kvm_host_lv_size | default('100G')}}"
+    size: "{{ kvm_host_lv_size }}"
+    resizefs: True
 
 - name: Creating FS on dedicated Lv (if needed)
   filesystem:
     fstype: ext4
     opts: "-m 0.2"
     dev: "/dev/{{ kvm_host_vg }}/libvirt_images"
-    resizefs: True
 
 - name: Ensuring dedicated LV is mounted
   mount:
