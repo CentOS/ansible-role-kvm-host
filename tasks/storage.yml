@@ -1,25 +1,3 @@
-- name: Ensuring KVM qemu tools are installed
-  yum: name={{ item }} state=installed
-  with_items:
-    - qemu-kvm-tools
-    - qemu-kvm
-    - virt-install
-    - libvirt
-    - libvirt-python
-    - libguestfs-tools-c
-
-- name: Ensuring libvirtd is started
-  service: 
-    name: libvirtd 
-    state: started 
-    enabled: yes
-
-- name: Defining a directory to hold all kickstart files
-  file: 
-    path: /var/lib/libvirt/local-kickstarts/ 
-    state: directory 
-    owner: root 
-    group: root
 
 - name: Dedicated LV for libvirt-images
   lvol:
