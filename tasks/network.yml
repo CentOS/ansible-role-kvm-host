@@ -1,21 +1,3 @@
-#- name: Adding network bridges if defined
-#  nmcli:
-#    type: bridge
-#    conn_name: "{{ item.name }}"
-#    state: present
-#    ip4: 127.0.0.200
-#    master: "{{ item.name }}"
-#  with_items: "{{ kvm_host_net_bridges }}"
-
-#- name: Adding device to bridge interface
-#  nmcli:
-#    type: ethernet
-#    conn_name: "{{ item.name }}-slave-{{ item.device }}"
-#    state: present
-#    ip4: 127.0.0.201
-#    ifname: "{{ item.device }}"
-#  with_items: "{{ kvm_host_net_bridges }}"
-
 - name: Configuring bridges
   template:
     src: ifcfg-bridge.j2
