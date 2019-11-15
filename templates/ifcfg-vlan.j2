@@ -1,0 +1,11 @@
+VLAN=yes
+TYPE=Vlan
+PHYSDEV={{ item.device }}
+VLAN_ID={{ item.vlan_id }}
+REORDER_HDR=yes
+GVRP=no
+MVRP=no
+NAME=bridge-slave-{{ item.device }}.{{ item.vlan_id }}
+DEVICE={{ item.device }}.{{ item.vlan_id }}
+ONBOOT=yes
+BRIDGE={{ item.name }}

@@ -1,0 +1,50 @@
+#- name: Adding network bridges if defined
+#  nmcli:
+#    type: bridge
+#    conn_name: "{{ item.name }}"
+#    state: present
+#    ip4: 127.0.0.200
+#    master: "{{ item.name }}"
+#  with_items: "{{ kvm_host_net_bridges }}"
+
+#- name: Adding device to bridge interface
+#  nmcli:
+#    type: ethernet
+#    conn_name: "{{ item.name }}-slave-{{ item.device }}"
+#    state: present
+#    ip4: 127.0.0.201
+#    ifname: "{{ item.device }}"
+#  with_items: "{{ kvm_host_net_bridges }}"
+
+- name: Configuring bridges
+  template:
+    src: ifcfg-bridge.j2
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.name }}"
+  with_items: "{{ kvm_host_net_bridges }}"  
+  notify: reload_nm
+  loop_control:
+    label: '{{ item.name }}'
+
+- name: Configuring ethernet devices
+  template:
+    src: ifcfg-ethernet.j2
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.device }}"
+  with_items: "{{ kvm_host_net_bridges }}"  
+  when: " item.vlan_id is not defined"
+  notify: reload_nm
+  loop_control:
+    label: '{{ item.device }}'
+
+- name: Configuring vlan interfaces
+  template:
+    src: ifcfg-vlan.j2
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.device }}.{{ item.vlan_id }}"
+  with_items: "{{ kvm_host_net_bridges }}"  
+  when: " item.vlan_id is defined"
+  notify: reload_nm
+  loop_control:
+    label: '{{ item.name }}'
+
+
+
+

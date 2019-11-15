@@ -30,4 +30,6 @@
     state: directory
     setype: virt_image_t
 
-
+- include_tasks: network.yml
+  tags: 
+    - network

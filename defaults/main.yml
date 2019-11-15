@@ -9,3 +9,17 @@ kvm_host_manage_storage: True
 kvm_host_vg: "{{ ansible_lvm.vgs.keys() | list | first }}"
 # Default size for libvirt_images LV storage
 kvm_host_lv_size: 100G
+
+# Networking - bridges with vlan support
+# That will just create bridge without any ip settings attached to it , so dedicated for VMs
+# By default no bridge interface will be created.
+# Creating bridge over vlan is working and just need vlan_id specified
+# example:
+# kvm_host_net_bridges:
+#   - name: br0
+#     device: eth0
+#   - name: br-999
+#     device: eth0
+#     vlan_id: 999
+#     
+kvm_host_net_bridges: []
