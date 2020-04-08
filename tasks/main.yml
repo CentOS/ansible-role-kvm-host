@@ -1,12 +1,7 @@
 - name: Ensuring KVM qemu tools are installed
-  yum: name={{ item }} state=installed
-  with_items:
-    - qemu-kvm-tools
-    - qemu-kvm
-    - virt-install
-    - libvirt
-    - libvirt-python
-    - libguestfs-tools-c
+  yum: 
+    name: ['qemu-kvm-tools', 'qemu-kvm', 'virt-install', 'libvirt', 'libvirt-python', 'libguestfs-tools-c']
+    state: installed
 
 - name: Ensuring libvirtd is started
   service: 
