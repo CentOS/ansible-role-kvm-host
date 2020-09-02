@@ -1,0 +1,9 @@
+# Variables for CentOS 7
+
+kvm_pkgs:
+ - qemu-kvm-tools
+ - qemu-kvm
+ - virt-install
+ - libvirt
+ - libvirt-python
+ - libguestfs-tools-c
