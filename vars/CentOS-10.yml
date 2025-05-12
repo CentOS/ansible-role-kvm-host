@@ -1,0 +1,7 @@
+# Variables for CentOS 8
+
+kvm_pkgs:
+ - qemu-kvm
+ - virt-install
+ - libvirt
+ - python3-libvirt
