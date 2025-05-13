@@ -5,6 +5,23 @@
   with_first_found:
     - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
     - "{{ ansible_distribution }}.yml"
+  tags:
+    - always
+  
+- block:
+    - name: Dropping Virt SIG kvm power repo if needed
+      template:
+        src: centos-kvm-power.repo
+        dest: /etc/yum.repos.d/centos-kvm-power.repo
+    - name: Adding Virt SIG GPG key
+      copy:
+        src: RPM-GPG-KEY-CentOS-SIG-Virtualization
+        dest: /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-Virtualization
+  when:
+    - ansible_distribution_major_version|int > 9
+    - ansible_architecture=='ppc64le'
+  tags:
+    - repo
 
 - name: Ensuring KVM qemu tools are installed
   yum: 

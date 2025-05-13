@@ -1,0 +1,28 @@
+{% if ansible_distribution == 'CentOS' and ansible_distribution_release == 'Stream' %}
+{% set releasever = '$releasever-stream' %}
+{% else %}
+{% set releasever = '$releasever' %} 
+{% endif %}
+
+{% if centos_infra_env == 'prod' %}
+[centos-kvm-power]
+name=CentOS KVM power Virt SIG - el{{ansible_distribution_major_version }}
+baseurl=http://mirror.stream.centos.org/SIGs/{{ releasever }}/virt/$basearch/kvm-power/
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-Virtualization
+{% elif centos_infra_env == 'stg' %}
+[centos-kvm-power-testing]
+name=CentOS KVM power Virt SIG (staging) - el{{ansible_distribution_major_version }} 
+baseurl=https://buildlogs.centos.org/centos/{{ releasever }}/virt/$basearch/kvm-power/
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-Virtualization
+{% else %}
+[centos-kvm-power-dev]
+name=CentOS KVM power Virt SIG (candidate)- el{{ansible_distribution_major_version }} 
+baseurl=https://repo.dev.centos.org/{{ releasever }}/virt/kvm-power/$basearch/
+enabled=1
+gpgcheck=0
+{% endif %}
+
