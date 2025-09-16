@@ -23,3 +23,17 @@ kvm_host_lv_size: 100G
 #     vlan_id: 999
 #     
 kvm_host_net_bridges: []
+
+# We can also define some virtual networks (non bridge) like this:
+# kvm_host_networks:
+#   - name: test
+#     interface: virbr1 # usually there is already a virbr0 for 'default' so just increment in this list
+#     ip: 172.18.254.1
+#     netmask: 255.255.255.0
+#     dhcp_range_start: 172.18.254.2
+#     dhcp_range_end: 172.18.254.30
+#
+# Worth knowing that iptables/nftables rules aren't applied so be sure to have a look at iptables roles to then let some ports/network/traffic being forwarded and eventually natt'ed for ipv4 !
+# We just define the networks from a libvirt PoV here
+
+kvm_host_networks: []

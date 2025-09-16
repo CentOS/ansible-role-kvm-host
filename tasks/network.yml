@@ -27,6 +27,24 @@
   loop_control:
     label: '{{ item.name }}'
 
+- block:
+  - name: Configuring additional virtual networks
+    template:
+      src: net.xml.j2
+      dest: "/etc/libvirt/net-{{ item.name }}.xml"
+    loop_control:
+      label: '{{ item.name }}'
+    register: virtual_networks
+    with_items: "{{ kvm_host_networks }}"
 
-
+  - name: Definining virtual networks if needed
+    shell: 
+      cmd: "systemctl restart libvirtd && virsh net-define /etc/libvirt/net-{{ item.item.name }}.xml && virsh net-start {{ item.item.name }} && virsh net-autostart {{ item.item.name }}"
+    with_items: "{{ virtual_networks.results }}"
+    when: item.changed
+    loop_control:
+      label: '{{ item.item.name }}'
+      
+  tags:
+    - network
 
