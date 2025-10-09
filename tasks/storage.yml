@@ -1,3 +1,9 @@
+- name: Creating dedicated VG for libvirt storage
+  lvg:
+    vg: "{{ kvm_host_vg_name }}"
+    pvs: "{{ kvm_host_vg_disks }}"
+  when:
+    - kvm_host_dedicated_vg
 
 - name: Dedicated LV for libvirt-images
   lvol:
