@@ -50,3 +50,14 @@ kvm_host_net_bridges: []
 # We just define the networks from a libvirt PoV here
 
 kvm_host_networks: []
+
+# We can also support macvtap style network (between virtual network and bridge)
+# https://libvirt.org/formatnetwork.html#using-a-macvtap-direct-connection
+# Only caveat is that while it seems a bridge, kvm host and guests can't communicate over the tap interface
+# kvm_host_macvtap_networks:
+#   - name: vtap1
+#     interface: eth1
+#   - name: vtap
+#     interface: bond0.603
+#
+kvm_host_macvtap_networks: []

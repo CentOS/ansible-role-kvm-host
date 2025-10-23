@@ -44,6 +44,23 @@
     when: item.changed
     loop_control:
       label: '{{ item.item.name }}'
+
+  - name: Configuring additional macvtap networks
+    template:
+      src: net-macvtap.xml.j2
+      dest: "/etc/libvirt/net-{{ item.name }}.xml"
+    loop_control:
+      label: '{{ item.name }}'
+    register: macvtap_networks
+    with_items: "{{ kvm_host_macvtap_networks }}"
+
+  - name: Definining mactap virtual networks if needed
+    shell: 
+      cmd: "systemctl restart libvirtd && virsh net-define /etc/libvirt/net-{{ item.item.name }}.xml && virsh net-start {{ item.item.name }} && virsh net-autostart {{ item.item.name }}"
+    with_items: "{{ macvtap_networks.results }}"
+    when: item.changed
+    loop_control:
+      label: '{{ item.item.name }}'
       
   tags:
     - network
