@@ -1,0 +1,10 @@
+[connection]
+id=bridge-slave-{{ item.device }}
+type=ethernet
+controller={{ item.name }}
+interface-name={{ item.device }}
+port-type=bridge
+
+[ethernet]
+
+[bridge-port]

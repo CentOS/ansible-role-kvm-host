@@ -1,3 +1,5 @@
 # Defaults handlers for role kvm-host
 - name: reload_nm
   shell: nmcli con reload
+
+

@@ -1,31 +1,72 @@
-- name: Configuring bridges
-  template:
-    src: ifcfg-bridge.j2
-    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.name }}"
-  with_items: "{{ kvm_host_net_bridges }}"  
-  notify: reload_nm
-  loop_control:
-    label: '{{ item.name }}'
+- block:
+    - name: Configuring bridges (ifcfg style)
+      template:
+        src: ifcfg-bridge.j2
+        dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.name }}"
+      with_items: "{{ kvm_host_net_bridges }}"  
+      notify: reload_nm
+      loop_control:
+        label: '{{ item.name }}'
 
-- name: Configuring ethernet devices
-  template:
-    src: ifcfg-ethernet.j2
-    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.device }}"
-  with_items: "{{ kvm_host_net_bridges }}"  
-  when: " item.vlan_id is not defined"
-  notify: reload_nm
-  loop_control:
-    label: '{{ item.device }}'
+    - name: Configuring ethernet devices (ifcfg style)
+      template:
+        src: ifcfg-ethernet.j2
+        dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.device }}"
+      with_items: "{{ kvm_host_net_bridges }}"  
+      when: " item.vlan_id is not defined"
+      notify: reload_nm
+      loop_control:
+        label: '{{ item.device }}'
 
-- name: Configuring vlan interfaces
-  template:
-    src: ifcfg-vlan.j2
-    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.device }}.{{ item.vlan_id }}"
-  with_items: "{{ kvm_host_net_bridges }}"  
-  when: " item.vlan_id is defined"
-  notify: reload_nm
-  loop_control:
-    label: '{{ item.name }}'
+    - name: Configuring vlan interfaces (ifcfg style)
+      template:
+        src: ifcfg-vlan.j2
+        dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item.device }}.{{ item.vlan_id }}"
+      with_items: "{{ kvm_host_net_bridges }}"  
+      when: " item.vlan_id is defined"
+      notify: reload_nm
+      loop_control:
+        label: '{{ item.name }}'
+
+  when: ansible_distribution_major_version|int < 10
+
+# old ifcfg scripts aren't working anymore for rhel10+ so using new .nmconnection files
+- block:
+    - name: Configuring bridges (nmconnection style)
+      template:
+        src: nm-bridge.nmconnection.j2
+        dest: "/etc/NetworkManager/system-connections/{{ item.name }}.nmconnection"
+        mode: '0600'
+      with_items: "{{ kvm_host_net_bridges }}"  
+      notify: reload_nm
+      loop_control:
+        label: '{{ item.name }}'
+
+    - name: Configuring ethernet devices (nmconnection style) 
+      template:
+        src: nm-ethernet.nmconnection.j2
+        dest: "/etc/NetworkManager/system-connections/{{ item.device }}.nmconnection"
+        mode: '0600'
+      with_items: "{{ kvm_host_net_bridges }}"  
+      when: " item.vlan_id is not defined"
+      notify: reload_nm
+      loop_control:
+        label: '{{ item.device }}'
+
+    - name: Configuring vlan interfaces (nmconnection style) 
+      template:
+        src: nm-vlan.nmconnection.j2
+        dest: "/etc/NetworkManager/system-connections/{{ item.device }}.{{ item.vlan_id }}.nmconnection"
+        mode: '0600'
+      with_items: "{{ kvm_host_net_bridges }}"  
+      when: " item.vlan_id is defined"
+      notify: 
+        - reload_nm
+      loop_control:
+        label: '{{ item.name }}'
+
+  when: ansible_distribution_major_version|int > 9
+  
 
 - block:
   - name: Configuring additional virtual networks

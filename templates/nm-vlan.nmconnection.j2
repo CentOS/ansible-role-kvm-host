@@ -1,0 +1,15 @@
+[connection]
+id=bridge-slave-{{ item.device }}.{{ item.vlan_id }}
+type=vlan
+controller={{ item.name }}
+interface-name={{ item.device }}.{{ item.vlan_id }}
+port-type=bridge
+
+[ethernet]
+
+[vlan]
+flags=1
+id={{ item.vlan_id }}
+parent={{ item.device }}
+
+[bridge-port]

@@ -1,0 +1,17 @@
+[connection]
+id={{ item.name }}
+type=bridge
+autoconnect-ports=1
+interface-name={{ item.name }}
+
+[ethernet]
+
+[bridge]
+stp=false
+
+[ipv4]
+method=disabled
+
+[ipv6]
+addr-gen-mode=default
+method=ignore
