@@ -5,3 +5,4 @@ kvm_pkgs:
  - virt-install
  - libvirt
  - python3-libvirt
+ - libvirt-daemon-kvm
